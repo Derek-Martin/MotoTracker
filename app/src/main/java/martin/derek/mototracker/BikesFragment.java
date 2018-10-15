@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -22,14 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 
 public class BikesFragment extends Fragment {
 
@@ -37,9 +30,6 @@ public class BikesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private ExpandableListView bikesList;
     private ExpandableListAdapter listAdapter;
-
-    private List<String> dataHeaders = new ArrayList<>();
-    private HashMap<String,List<BikeJson>> listHashMap = new HashMap<>();
 
     private View MyView;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -54,36 +44,53 @@ public class BikesFragment extends Fragment {
     //  DocumentSnapshot.getData()   the Map is just the fields in key value.
 
     public void reSetup(final DataSnapshot dataSnapshot) {
+
         Toast.makeText(MyView.getContext(), "Bikes: " + dataSnapshot.getChildrenCount(), Toast.LENGTH_LONG).show();
-        bikesList.setAdapter(listAdapter);
+
+        //Run on a thread for better performance.
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                final LinearLayout linearLayout = MyView.findViewById(R.id.Bikes);
+                linearLayout.removeAllViews();
+                Iterable<DataSnapshot> d = dataSnapshot.getChildren();
+                while (d.iterator().hasNext()) {//Each Bike
+                    DataSnapshot temp = d.iterator().next();
 
-        Iterable<DataSnapshot> d = dataSnapshot.getChildren();
-        while (d.iterator().hasNext()) {//Each Bike
-            DataSnapshot temp = d.iterator().next();
-            //Old Way
-//            dataHeaders.add(temp.getKey());
-//            listHashMap.put(temp.getKey(),new ArrayList<BikeJson>());
+                    //New Way
+                    Log.d("BikesJson",temp.getValue().toString());
+                    String fixed = temp.getValue().toString().replace('=',':');
+                    //TODO Prefixes for bike to write to db.
+                    final BikeJson s = new BikeJson(fixed.substring(1,fixed.length()),temp.getKey(),temp.getKey());
 
+                    Button b = new Button(linearLayout.getContext());
+                    b.setText(temp.getKey());
 
-            //New Way
-            Log.d("BikesJson",temp.getValue().toString());
-            String fixed = temp.getValue().toString().replace('=',':');
-            //TODO Prefixes for bike to write to db.
-            BikeJson s = new BikeJson(fixed.substring(1,fixed.length()),temp.getKey(),temp.getKey());
-            s.SetupView((BikeExpandableListViewAdapter) listAdapter);
-//            listHashMap.get(temp.getKey()).add(s);
-            ;
-            //spacer for new Way temp
-            TextView textView = new TextView(getContext());
-            textView.setText("--------------");
-            ((LinearLayout) MyView.findViewById(R.id.Random_Crap)).addView(textView);
-            Log.d("BikesSetup","Spacer----");
+                    linearLayout.addView(b);
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            BikeJson ToChange = s;
 
-        }
+                            if(ToChange.IsOpen) {
+                                ToChange.Close(); }
+                            else {
+
+                                int count = linearLayout.getChildCount();
+                                for(int i = 0;i<count;i++){
+                                    if(linearLayout.getChildAt(i) instanceof Button&&((Button)linearLayout.getChildAt(i)).getText().equals(ToChange.Header))
+                                    {
+                                        ToChange.Open(i+1);
+                                        break;
+                                    }
+                                }
+
+                            }
+                        }
+                    });
+                    s.SetupView(linearLayout);
+                }
             }
         });
         t.run();
@@ -94,8 +101,6 @@ public class BikesFragment extends Fragment {
 
 
     public void setup(){
-        listAdapter = new BikeExpandableListViewAdapter(this.getContext(), dataHeaders,listHashMap);
-        bikesList = MyView.findViewById(R.id.bikes_list_view);
         Email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         myRef = database.getReference(Email.substring(0,Email.length()-4));
 

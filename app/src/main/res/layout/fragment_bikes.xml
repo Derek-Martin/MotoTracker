@@ -11,20 +11,14 @@
         android:layout_height="wrap_content"
         android:text="BIKES FRAGMENT"
         android:layout_margin="20dp"/>
-    <ExpandableListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/bikes_list_view"/>
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/Random_Crap"/>
-    </ScrollView>
+        android:id="@+id/Bikes"/>
+
 
 </LinearLayout>
