@@ -3,6 +3,7 @@ package martin.derek.mototracker;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +65,7 @@ public class BikesFragment extends Fragment {
                     //TODO Prefixes for bike to write to db.
                     final BikeJson s = new BikeJson(fixed.substring(1,fixed.length()),temp.getKey(),temp.getKey());
 
-                    Button b = new Button(linearLayout.getContext());
+                    MaterialButton b = (MaterialButton) LayoutInflater.from(linearLayout.getContext()).inflate(R.layout.bike_button,null);
                     b.setText(temp.getKey());
 
                     linearLayout.addView(b);
@@ -89,7 +90,7 @@ public class BikesFragment extends Fragment {
                             }
                         }
                     });
-                    s.SetupView(linearLayout);
+                    s.SetupView(linearLayout,10);
                 }
             }
         });

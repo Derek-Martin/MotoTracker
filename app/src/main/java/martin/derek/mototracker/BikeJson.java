@@ -3,17 +3,28 @@ package martin.derek.mototracker;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.recyclerview.extensions.ListAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -32,7 +43,9 @@ public class BikeJson {
     public HashMap<String, BikeJson> Collections = new HashMap<>();
     private String Prefix = "";
 
-    private ListView MyFields;
+    private RecyclerView MyFields;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private LinearLayout MyLayout;
     private LinearLayout Parent;
@@ -52,7 +65,10 @@ public class BikeJson {
     }
 
     private void SetupFieldView() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(MyFields.getContext(), R.layout.list_item, R.id.list_item, Fields);
+        layoutManager = new LinearLayoutManager(MyLayout.getContext());
+        MyFields.setLayoutManager(layoutManager);
+
+        adapter = new FieldsAdapter(Fields);
         MyFields.setAdapter(adapter);
         MyLayout.addView(MyFields);
     }
@@ -72,18 +88,38 @@ public class BikeJson {
     }
 
 
-    public void SetupView(LinearLayout parent)
+    public void SetupView(LinearLayout parent, int Padding)
     {
         Parent = parent;
 
         MyLayout = new LinearLayout(parent.getContext());
-        MyLayout.setPadding(10,10,10,10);
+        MyLayout.setPadding(10+Padding,10,10,10);
+        MyLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout adds = new LinearLayout(parent.getContext());
+        adds.setOrientation(LinearLayout.VERTICAL);
+        adds.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+//        adds.setBackgroundColor(Color.GRAY);
+
+        MyLayout.addView(adds);
+        MaterialButton collect = (MaterialButton) LayoutInflater.from(MyLayout.getContext()).inflate(R.layout.add_button,null);
+        collect.setText("Category");
+        collect.setGravity(Gravity.START |Gravity.CENTER_VERTICAL);
+        adds.addView(collect);
+
+
+        MaterialButton field = (MaterialButton) LayoutInflater.from(MyLayout.getContext()).inflate(R.layout.add_button,null);
+        field.setText("Item");
+        field.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
+        adds.addView(field);
+
 
 //        Random r = new Random();
 //        MyLayout.setBackgroundColor(Color.rgb(r.nextInt(255),r.nextInt(255),r.nextInt(255)));
-        MyLayout.setOrientation(LinearLayout.VERTICAL);
 
-        MyFields = new ListView(MyLayout.getContext());
+
+
+        MyFields = new RecyclerView(MyLayout.getContext());
 
         SetupFieldView();
 
@@ -92,10 +128,8 @@ public class BikeJson {
         while (t.hasNext())
         {
             String next = t.next().toString();
-
-            Button b = new Button(MyLayout.getContext());
+            MaterialButton b = (MaterialButton) LayoutInflater.from(MyLayout.getContext()).inflate(R.layout.category_button,null);
             b.setText(next);
-
             MyLayout.addView(b);
 
             b.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +156,7 @@ public class BikeJson {
                     }
                 }
             });
-            Collections.get(next).SetupView(MyLayout);
+            Collections.get(next).SetupView(MyLayout, Padding+10);
         }
     }
 
@@ -148,7 +182,6 @@ public class BikeJson {
             if(!inList && jsonArr[i] == ',' && jsonArr[i+1] != '{'&& Prev.length() > 1)
             {
                 Prev = Prev.substring(0,Prev.length()-1);
-//                Log.d("BikesJson","Field Added: "+Prev);
                 Fields.add(Prev.trim());
                 Prev = "";
             }else if (jsonArr[i] == '{') {
@@ -162,7 +195,6 @@ public class BikeJson {
 
                 //TODO Prefix for children
                 Collections.put(KeyName,new BikeJson(Prev.substring(firstCurley+1,Prev.length()-1).trim(),prefix+"",KeyName));
-//                Log.d("BikesJson","Key: "+KeyName+" Collection Added: "+Prev.substring(firstCurley+1,Prev.length()-1).trim());
                 Prev = "";
                 inList = false;
             }
@@ -173,7 +205,7 @@ public class BikeJson {
 
         if(Prev.length()>1)
         {
-            Fields.add(Prev);
+            Fields.add(Prev.trim());
 //            Log.d("BikesJson","Field Added: "+Prev);
         }
     }
