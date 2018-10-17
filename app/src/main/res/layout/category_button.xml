@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/material_icon_button"
     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+    android:backgroundTint="@color/colorSubCategory"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:icon="@drawable/ic_keyboard_arrow_down_black_24dp">

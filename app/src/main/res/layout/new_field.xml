@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="horizontal">
+
+<GridLayout
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:columnCount="4">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:inputType="text"
+        android:hint="Part Location"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:inputType="text"
+        android:hint="Part"
+        android:layout_column="1"/>
+    <android.support.design.button.MaterialButton
+        android:id="@+id/item_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:foreground="@drawable/ic_add_black_24dp"
+        android:maxWidth="12dp"
+        android:maxHeight="12dp"
+        android:layout_column="2"
+        />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/item_discard"
+        android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    style="@style/Widget.MaterialComponents.Button.Icon"
+    app:icon="@drawable/ic_indeterminate_check_box_black_24dp"
+    android:width="10dp"
+    android:layout_column="3"
+    />
+
+</GridLayout>
+</HorizontalScrollView>

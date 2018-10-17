@@ -1,8 +1,10 @@
 package martin.derek.mototracker;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Trace;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +49,7 @@ public class BikesFragment extends Fragment {
 
     public void reSetup(final DataSnapshot dataSnapshot) {
 
+                (MyView.findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
         Toast.makeText(MyView.getContext(), "Bikes: " + dataSnapshot.getChildrenCount(), Toast.LENGTH_LONG).show();
 
         //Run on a thread for better performance.
@@ -53,6 +57,9 @@ public class BikesFragment extends Fragment {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+
+
+                ((ProgressBar)(MyView.findViewById(R.id.progressBar))).setProgress(50);
                 final LinearLayout linearLayout = MyView.findViewById(R.id.Bikes);
                 linearLayout.removeAllViews();
                 Iterable<DataSnapshot> d = dataSnapshot.getChildren();
@@ -63,7 +70,7 @@ public class BikesFragment extends Fragment {
                     Log.d("BikesJson",temp.getValue().toString());
                     String fixed = temp.getValue().toString().replace('=',':');
                     //TODO Prefixes for bike to write to db.
-                    final BikeJson s = new BikeJson(fixed.substring(1,fixed.length()),temp.getKey(),temp.getKey());
+                    final BikeJson s = new BikeJson(fixed.substring(1,fixed.length()),Email+"/"+temp.getKey(),temp.getKey());
 
                     MaterialButton b = (MaterialButton) LayoutInflater.from(linearLayout.getContext()).inflate(R.layout.bike_button,null);
                     b.setText(temp.getKey());
@@ -90,8 +97,12 @@ public class BikesFragment extends Fragment {
                             }
                         }
                     });
-                    s.SetupView(linearLayout,10);
+                    s.SetupView(linearLayout,20);
                 }
+
+                ((ProgressBar)(MyView.findViewById(R.id.progressBar))).setProgress(100);
+
+                ((ProgressBar)(MyView.findViewById(R.id.progressBar))).setVisibility(View.INVISIBLE);
             }
         });
         t.run();
@@ -102,8 +113,9 @@ public class BikesFragment extends Fragment {
 
 
     public void setup(){
-        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        myRef = database.getReference(Email.substring(0,Email.length()-4));
+        ((ProgressBar)(MyView.findViewById(R.id.progressBar))).setProgress(25);
+        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail().substring(0,FirebaseAuth.getInstance().getCurrentUser().getEmail().length()-4);
+        myRef = database.getReference(Email);
 
 
         myRef.addValueEventListener(new ValueEventListener() {

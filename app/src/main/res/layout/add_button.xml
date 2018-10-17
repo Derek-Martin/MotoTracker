@@ -4,8 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/material_icon_button"
     style="@style/Widget.MaterialComponents.Button.TextButton"
+    android:textColor="@color/colorAddButton"
+    app:iconTint="@color/colorAddButton"
+    android:layout_marginTop="-5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:textSize="12sp"
     app:icon="@drawable/ic_add_black_24dp">
 
 </android.support.design.button.MaterialButton>
