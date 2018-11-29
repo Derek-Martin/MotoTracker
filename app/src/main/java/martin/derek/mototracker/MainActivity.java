@@ -1,12 +1,18 @@
 package martin.derek.mototracker;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,13 +27,17 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         BikesFragment.OnFragmentInteractionListener,
         FriendsFragment.OnFragmentInteractionListener,
-        FriendsBikesFragment.OnFragmentInteractionListener{
+        FriendsBikesFragment.OnFragmentInteractionListener,
+        NotificationFragment.OnFragmentInteractionListener{
 
     private FirebaseAuth auth;
+    public static MainActivity This;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +59,12 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.main_container,new BikesFragment()).commit();
         auth = FirebaseAuth.getInstance();
         ((TextView)(navigationView.getHeaderView(0).findViewById(R.id.User_Email))).setText(auth.getCurrentUser().getEmail());
+        This = this;
 
 
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -77,11 +90,16 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case(R.id.action_settings):
+                return true;
+            case (R.id.action_logout):
+                FirebaseAuth.getInstance().signOut();
+                Intent t = new Intent(this,LoginActivity.class);
+                t.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(t);
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -102,11 +120,15 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_Friends:
                 frag = new FriendsFragment();
                 break;
-            case R.id.nav_Websites:
+            case R.id.nav_Notifications:
+                frag = new NotificationFragment();
                 break;
             case R.id.nav_Manuals:
                 break;
-                default:
+            case R.id.nav_Websites:
+            break;
+
+            default:
         }
 
         fragmentManager.beginTransaction()

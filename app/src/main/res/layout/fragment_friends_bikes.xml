@@ -5,10 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".FriendsBikesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Friends bikes" />
+        android:layout_height="wrap_content">
 
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/Bikes"/>
+
+    </ScrollView>
 </FrameLayout>

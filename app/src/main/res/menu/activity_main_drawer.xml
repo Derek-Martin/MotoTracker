@@ -13,6 +13,9 @@
         <item
             android:id="@+id/nav_Friends"
             android:title="Friend Manager" />
+        <item
+            android:id="@+id/nav_Notifications"
+            android:title="Notifications" />
     </group>
 
     <item android:title="Saved Items">

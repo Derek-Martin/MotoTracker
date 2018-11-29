@@ -11,9 +11,12 @@ import java.util.List;
 public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.MyViewHolder> {
     private List<String> Data;
 
+
     public FieldsAdapter(List<String> data){
         Data = data;
     }
+
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView mTextView;

@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="horizontal">
-
-<GridLayout
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:columnCount="4">
 
     <EditText
+        android:id="@+id/editText"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:inputType="text"
-        android:hint="Part Location"/>
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:hint="Part"
+        android:inputType="text"/>
 
     <EditText
+        android:id="@+id/editText2"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:inputType="text"
-        android:hint="Part"
-        android:layout_column="1"/>
-    <android.support.design.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:layout_marginStart="8dp"
+        android:hint="Spec"
+        android:inputType="text"/>
+
+    <ImageButton
         android:id="@+id/item_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Button.Icon"
-        android:foreground="@drawable/ic_add_black_24dp"
-        android:maxWidth="12dp"
-        android:maxHeight="12dp"
-        android:layout_column="2"
-        />
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_plus"/>
 
-    <android.support.design.button.MaterialButton
+    <ImageButton
         android:id="@+id/item_discard"
         android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    style="@style/Widget.MaterialComponents.Button.Icon"
-    app:icon="@drawable/ic_indeterminate_check_box_black_24dp"
-    android:width="10dp"
-    android:layout_column="3"
-    />
+        android:layout_height="wrap_content"
+        android:layout_column="3"
+        android:src="@drawable/ic_cross_24dp"/>
 
-</GridLayout>
-</HorizontalScrollView>
+</LinearLayout>

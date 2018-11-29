@@ -12,9 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ScrollView
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Bike"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:id="@+id/add_bike"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroller"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:padding="10dp"
@@ -23,6 +32,6 @@
         android:orientation="vertical"
         android:id="@+id/Bikes"/>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>

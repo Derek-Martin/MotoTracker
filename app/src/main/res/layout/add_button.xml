@@ -10,6 +10,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="12sp"
-    app:icon="@drawable/ic_add_black_24dp">
+    app:icon="@drawable/ic_plus">
 
 </android.support.design.button.MaterialButton>
