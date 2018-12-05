@@ -8,16 +8,34 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.widget.CardView;
+import android.util.ArraySet;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.sql.Array;
+import java.sql.Timestamp;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -29,6 +47,67 @@ public class NotificationScheduler
 {
     public static final int DAILY_REMINDER_REQUEST_CODE=100;
     public static final String TAG="NotificationScheduler";
+
+    public static void MakeNotifications(String Email, final Context context)
+    {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        firestore.collection("Users").document(Email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                SharedPreferences appSharedPrefs = context.getSharedPreferences("Notifications", Context.MODE_PRIVATE);
+                SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+
+                Map<String, Object> fields = task.getResult().getData();
+
+                Set<String> dates = new ArraySet<>();
+                Set<String> noti = new ArraySet<>();
+                ArrayList<Date> dates1 = new ArrayList<>();
+
+                for (String key : fields.keySet()){
+                    dates1.add((Date) fields.get(key));
+                    noti.add(key);
+                }
+                Collections.sort(dates1);
+
+                for(Date t : dates1)
+                    dates.add(t.toString());
+
+                prefsEditor.clear();
+                prefsEditor.putStringSet("dates",dates);
+                prefsEditor.putStringSet("noti",noti);
+                prefsEditor.apply();
+
+
+                dates1.get(0);
+//                NotificationScheduler.setReminder(MainActivity.This,AlarmReceiver.class,i,i1,i2,editText.getText().toString());
+
+
+
+
+            }
+        });
+    }
+
+    public static class ComparableDate implements Comparable<ComparableDate> {
+
+        private Date dateTime;
+        private String Text;
+
+
+        public Date getDateTime() {
+            return dateTime;
+        }
+
+        public void setDateTime(Date datetime) {
+            this.dateTime = datetime;
+        }
+
+        @Override
+        public int compareTo(ComparableDate o) {
+            return getDateTime().compareTo(o.getDateTime());
+        }
+    }
 
     public static void setReminder(Context context,Class<?> cls,int year, int month,int day, String content)
     {
@@ -56,8 +135,10 @@ public class NotificationScheduler
 
 
         Intent intent1 = new Intent(context, cls);
-        intent1.putExtra("Body",content);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, setcalendar.get(Calendar.MILLISECOND), intent1, PendingIntent.FLAG_UPDATE_CURRENT|  Intent.FILL_IN_DATA);
+        intent1.setAction(new Random().nextLong()+"");
+//        Toast.makeText(context, "Seconds: "+setcalendar.get(Calendar.MILLISECOND), Toast.LENGTH_SHORT).show();
+        intent1.putExtra("body",content);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), intent1, 0);
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, setcalendar.getTimeInMillis(), pendingIntent);
 
