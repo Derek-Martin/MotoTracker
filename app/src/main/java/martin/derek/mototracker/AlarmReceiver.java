@@ -3,8 +3,11 @@ package martin.derek.mototracker;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Set;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -18,19 +21,26 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
                 // Set the alarm here.
                 Log.d(TAG, "onReceive: BOOT_COMPLETED");
-                LocalData localData = new LocalData(context);
-                NotificationScheduler.setReminder(context, AlarmReceiver.class, localData.get_year(), localData.get_month(),localData.get_day(), intent.getStringExtra("Body"));
+                Toast.makeText(context, "BOOT COMPLETED", Toast.LENGTH_SHORT).show();
+
+//                NotificationScheduler.setReminder(context, AlarmReceiver.class, localData.get_year(), localData.get_month(),localData.get_day(), intent.getStringExtra("Body"));
                 return;
             }
         }
 
-
-
+        SharedPreferences appSharedPrefs = context.getSharedPreferences("Notifications", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         Log.d(TAG, "onReceive: ");
-        Toast.makeText(context,         intent.getExtras().keySet().iterator().next() +" : "+intent.getExtras().size() , Toast.LENGTH_SHORT).show();
+
+//        Set<String> Noti = appSharedPrefs.getStringSet("noti",null);
+
+
+//        Toast.makeText(context,"SHOWING" , Toast.LENGTH_SHORT).show();
         //Trigger the notification
-        NotificationScheduler.showNotification(context, MainActivity.class,
-                "Reminder", intent.getStringExtra("Body"));
+        NotificationScheduler.showNotification(context, MainActivity.class,"Maintenance Reminder", intent.getStringExtra("body"));
+
+
+
 
     }
 }
