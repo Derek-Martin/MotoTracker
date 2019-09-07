@@ -95,93 +95,6 @@ public class BikesFragment extends Fragment {
 //            Snackbar.make(MyView,temp.getValue().toString(),Snackbar.LENGTH_LONG).show();
             linearLayout.addView(BikeJsonV2.MakeLayout(R.layout.bike_button,linearLayout,temp.getKey(),bikeJsonV2,Email,temp));
             //bikeJsonV2.SetupView(linearLayout, 20);
-
-//Old way
-            //New Way
-//            Log.d("BikesJson", temp.getValue().toString());
-//            String fixed = temp.getValue().toString().replace('=', ':');
-//            //TODO Prefixes for bike to write to db.
-//            final BikeJson s = new BikeJson(fixed.substring(1, fixed.length()), Email, temp.getKey().trim());
-//            LinearLayout layout = (LinearLayout) LayoutInflater.from(linearLayout.getContext()).inflate(R.layout.bike_button, null);
-//            layout.setTag(temp.getKey());
-//            layout.setTag(temp.getKey());
-//            final Button b = layout.findViewById(R.id.bike_expand_button);
-//            b.setText(temp.getKey());
-//
-//            linearLayout.addView(layout);
-//            b.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    BikeJson ToChange = s;
-//                    if (ToChange.IsOpen) {
-//                        ToChange.Close();
-//                    } else {
-//                        int count = linearLayout.getChildCount();
-//                        for (int i = 0; i < count; i++) {
-//                            if (linearLayout.getChildAt(i).getTag()!=null&&linearLayout.getChildAt(i).getTag().toString().equals(ToChange.Header)) {
-//                                ToChange.Open(i + 1);
-//                                break;
-//                            }
-//                        }
-//
-//                    }
-//                }
-//            });
-//            b.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    new AlertDialog.Builder(view.getContext())
-//                            .setTitle("Delete")
-//                            .setMessage("Do you want to DELETE this category and all containing sub-categorys?")
-//                            .setIcon(R.drawable.ic_cross_24dp)
-//                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//                                    FirebaseDatabase.getInstance().getReference(Email+"/"+b.getText().toString()).removeValue();
-//
-//                                    Snackbar.make(MyView,b.getText() +" deleted.",10000)
-//                                            .setAction("Undo", new View.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(View view) {
-//                                                    Object t = temp.getValue();
-//                                                    FirebaseDatabase.getInstance().getReference(Email+"/"+b.getText().toString()).setValue(temp.getValue());
-//                                                }
-//                                            }).show();
-//                                }
-//                            })
-//                            .setNegativeButton("No",null)
-//                            .show();
-//                    return true;
-//                }
-//            });
-//
-//            ((ImageButton)layout.findViewById(R.id.add_button)).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(final View view) {
-//                    PopupMenu popupMenu = new PopupMenu(view.getContext(),view);
-//                    popupMenu.getMenuInflater().inflate(R.menu.collection_field,popupMenu.getMenu());
-//                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                        @Override
-//                        public boolean onMenuItemClick(MenuItem menuItem) {
-//                            if (menuItem.getTitle().equals("Category")) {
-//                                if(!s.IsOpen)
-//                                    b.callOnClick();
-//                                s.AddCollection();
-//                            } else if (menuItem.getTitle().equals("Part")) {
-//                                if(!s.IsOpen)
-//                                    b.callOnClick();
-//                                s.AddField();
-//
-//                            }
-//
-//                            return  true;
-//                        }
-//                    });
-//                    popupMenu.show();
-//                }
-//            });
-//
-
         }
         ((ProgressBar) (MyView.findViewById(R.id.progressBar))).setProgress(100);
         ((ProgressBar) (MyView.findViewById(R.id.progressBar))).setVisibility(View.INVISIBLE);
@@ -230,6 +143,7 @@ public class BikesFragment extends Fragment {
 
             }
         });
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

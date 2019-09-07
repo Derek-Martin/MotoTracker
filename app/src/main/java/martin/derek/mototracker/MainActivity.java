@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (item.getItemId()){
             case R.id.nav_My_Bikes:
-                frag = new BikesFragment();
+                frag = new BikesTagsFragment();
                 break;
             case R.id.nav_Friend_Bikes:
                 frag = new FriendsBikesFragment();

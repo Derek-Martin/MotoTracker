@@ -16,7 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Toast.makeText(context, "MAKING ALARM", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "MAKING ALARM", Toast.LENGTH_SHORT).show();
         if (intent.getAction() != null && context != null) {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
                 // Set the alarm here.
