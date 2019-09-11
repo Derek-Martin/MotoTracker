@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity
         BikesFragment.OnFragmentInteractionListener,
         FriendsFragment.OnFragmentInteractionListener,
         FriendsBikesFragment.OnFragmentInteractionListener,
-        NotificationFragment.OnFragmentInteractionListener{
+        NotificationFragment.OnFragmentInteractionListener,
+        BikesTagsFragment.OnFragmentInteractionListener{
 
     private FirebaseAuth auth;
     public static MainActivity This;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (item.getItemId()){
             case R.id.nav_My_Bikes:
-                frag = new BikesTagsFragment();
+                frag = new BikesFragment();
                 break;
             case R.id.nav_Friend_Bikes:
                 frag = new FriendsBikesFragment();
@@ -122,6 +123,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_Notifications:
                 frag = new NotificationFragment();
+                break;
+            case R.id.nav_Tag_Bikes:
+                frag = new BikesTagsFragment();
                 break;
             case R.id.nav_Manuals:
                 break;

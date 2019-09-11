@@ -1,6 +1,8 @@
 package martin.derek.mototracker;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 
@@ -17,42 +19,48 @@ public class Part {
 
     public List<String> Tags;
 
-    public Part(DataSnapshot temp){
-        //TODO MAKE THE PART
-        //BIG LIST
-        HashMap<String, Object> data = (HashMap<String,Object>)temp.getValue();
-        for (String next : data.keySet()) {
-            Object current = data.get(next);
-            //TODO
-            //Im hoping that this is the name for the current object.
-            temp.getKey();
-            if (current instanceof String) {
-                if (next.equals("_") && current.toString().equals("_"))
-                    continue;
-                else if(next.equals("Name")){
 
-                }else if(next.equals("Price")){
-
-                }else if(next.equals("Brand")){
-
-                }else if(next.equals("Description")){
-
-                }else if(next.equals("Installed On")){
-
-                }
-            } else if (current instanceof HashMap) {
-                //TODO DEAL WITH ALLT HE TAGS
-//                Collections.put(next, new BikeJsonV2(Prefix+"/"+Header,Email,MyLayout,dataSnapshot.child(next)));
-//                Log.d("BikesJsonV2", "Collection added: " + next);
-            }
-        }
+    //Might make this eaiser.
+    public View GetView(){
+        return null;
     }
-    public Part(String name, List<String> tags){
-        Name = name;
-        Tags = tags;
-    }
-    public Part(String name){
-        Name = name;
+
+    public Part(DataSnapshot temp) {
+        //TODO Retard proof
+        HashMap<String, Object> data = (HashMap<String, Object>) temp.getValue();
+        Name = temp.getKey();
+        Log.d("tags","data: "+data);
+
+        Brand = data.get("Brand").toString();
+        Description = data.get("Description").toString();
+        Price = data.get("Price").toString();
+        InstalledOn = data.get("Installed On").toString();
+
+        HashMap<String,String> tempTags = (HashMap<String, String>) data.get("Tags");
         Tags = new ArrayList<>();
+        Tags.addAll(tempTags.keySet());
+
+    }
+
+    @NonNull
+    @Override
+    public java.lang.String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Name);
+        sb.append("\n");
+        sb.append(Brand);
+        sb.append(" | ");
+        sb.append(Price);
+        sb.append(" | ");
+        sb.append(InstalledOn);
+        sb.append("\n");
+        sb.append(Description);
+        sb.append("\n");
+        sb.append("Tags: ");
+        for (String tag : Tags) {
+            sb.append(tag);
+            sb.append(" | ");
+        }
+        return sb.toString();
     }
 }
