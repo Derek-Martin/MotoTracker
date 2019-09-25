@@ -7,9 +7,11 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/PartSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search for part name.">
+        android:hint="Search for part name."
+        android:layout_margin="5dp">
 
     </EditText>
 
@@ -26,11 +28,11 @@
     </HorizontalScrollView>
 
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/BikeslinearLayout"
-        android:layout_margin="5dp"></LinearLayout>
+        android:id="@+id/BikesRecyclerView"
+        android:layout_margin="5dp"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

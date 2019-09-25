@@ -4,14 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,11 +24,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import martin.derek.mototracker.adapters.BikeAdapter;
+
+
 
 public class BikesTagsFragment extends Fragment {
 
@@ -36,6 +46,8 @@ public class BikesTagsFragment extends Fragment {
 
     private List<Part> Parts;
     private HashMap<String, Integer> Tags;
+    private BikeAdapter adapter;
+    private String constraint = "";
     public BikesTagsFragment() { }
 
     //I need to make it get every part made.
@@ -45,11 +57,13 @@ public class BikesTagsFragment extends Fragment {
     //Search by part name.
 
     //This is called in the OnCreateView
+
     public void setup(){
         Parts = new ArrayList<>();
         Tags = new HashMap<>();
 
-        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail().substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
+        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail()
+                .substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
         myRef = database.getReference(Email);
 
         myRef.addValueEventListener(new ValueEventListener() {
@@ -63,13 +77,32 @@ public class BikesTagsFragment extends Fragment {
                 Toast.makeText(MyView.getContext(), "Error", Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
 
     //Called when ever data changes or initially with setup()
     private void setupViewWithData(DataSnapshot dataSnapshot){
-        LinearLayout linearLayout = MyView.findViewById(R.id.BikeslinearLayout);
         LinearLayout tagsLayout = MyView.findViewById(R.id.BikesTags);
+        EditText search = MyView.findViewById(R.id.PartSearch);
 
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                constraint = charSequence.toString();
+                adapter.getFilter().filter(constraint);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         //Getting the users current bikes.
         Iterable<DataSnapshot> d = dataSnapshot.getChildren();
         Log.d("Tags",d.toString());
@@ -85,45 +118,42 @@ public class BikesTagsFragment extends Fragment {
             }
 
             Log.d("tags",bike.toString());
-
-            View layout = LayoutInflater.from(linearLayout.getContext()).inflate(R.layout.tag_bike_display_button,null);
-
-
-
-            TextView textView = new TextView(linearLayout.getContext());
-            textView.setText(bike.toString());
-//            linearLayout.addView(textView);
-            linearLayout.addView(layout);
-
-
-//            BikesJsonV3 bikesJsonV3 = new BikesJsonV3(Email,temp);
-            //add it to our collection
-//            bikes.put(bikesJsonV3.BikeName,bikesJsonV3);
-            //Make a button and tell it which bike it belongs to
-//            LinearLayout bikeButtonParent = (LinearLayout) LayoutInflater.from(MyView.getContext()).inflate(R.layout.bike_tag_button,null);
-//            Button bikeButton = (Button)bikeButtonParent.getChildAt(0);
-//
-//            bikeButton.setTag(R.id.bike_name,bikesJsonV3.BikeName);
-//            bikeButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Button bikeButton = (Button)v;
-//
-//                    String bikeName = (String)bikeButton.getTag(R.id.bike_name);
-//                    BikesJsonV3 currentBike = bikes.get(bikeName);
-//
-//                    //TODO Open new activity. Show all parts and tags.
-//                }
-//            });
         }
-
-
+        RecyclerView recyclerView = MyView.findViewById(R.id.BikesRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new BikeAdapter(Parts,recyclerView.getContext(),recyclerView);
+        recyclerView.setAdapter(adapter);
+        recyclerView.refreshDrawableState();
+        Tags = sortByValue(Tags);
         Log.d("tags","");
+
         for(String key : Tags.keySet()){
-            Button b = new Button(linearLayout.getContext());
-            b.setText(Tags.get(key)+"| "+key);
+            Button b = new Button(recyclerView.getContext());
+            b.getBackground().setTint(getResources().getColor(R.color.colorFieldBackground,null));
+
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String tag = ((Button)view).getTag().toString();
+                    Log.d("tags","Button Clicked | "+tag);
+
+                    if(adapter.tagsToFilter.contains(tag)){
+                        adapter.tagsToFilter.remove(tag);
+                        view.getBackground().setTint(getResources().getColor(R.color.colorFieldBackground,null));
+                    }else{
+
+                        adapter.tagsToFilter.add(tag);
+                        view.getBackground().setTint(getResources().getColor(R.color.colorAccent,null));
+                    }
+                    adapter.getFilter().filter(constraint);
+                }
+            });
+            b.setText(Tags.get(key)+" | "+key);
+            b.setTag(key);
             tagsLayout.addView(b);
         }
+
+
     }
 
     @Override
@@ -135,7 +165,7 @@ public class BikesTagsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        MyView =  inflater.inflate(R.layout.fragment_bikes_tags, container, false);
+        MyView =  inflater.inflate(R.layout.fragment_part_tags, container, false);
         setup();
         return MyView;
     }
@@ -159,4 +189,29 @@ public class BikesTagsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
+    {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Integer> > list =
+                new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
+
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
+            public int compare(Map.Entry<String, Integer> o1,
+                               Map.Entry<String, Integer> o2)
+            {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        // put data from sorted list to hashmap
+        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
+
 }
+
