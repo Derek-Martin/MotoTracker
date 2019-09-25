@@ -153,9 +153,9 @@ public class FriendsBikesFragment extends Fragment {
         if(!dataSnapshot.exists())
             return;
         linearLayout.removeAllViews();
-        FriendEmail = FriendEmail.substring(0, FriendEmail.length() - 4);
-        BikeJsonV2 bikeJsonV2 = new BikeJsonV2(FriendEmail,FriendEmail,linearLayout,dataSnapshot);
-        linearLayout.addView(BikeJsonV2.MakeLayout(R.layout.bike_button,linearLayout,dataSnapshot.getKey(),bikeJsonV2,FriendEmail,dataSnapshot));
+//        FriendEmail = FriendEmail.substring(0, FriendEmail.length() - 4);
+//        BikeJsonV2 bikeJsonV2 = new BikeJsonV2(FriendEmail,FriendEmail,linearLayout,dataSnapshot);
+//        linearLayout.addView(BikeJsonV2.MakeLayout(R.layout.bike_button,linearLayout,dataSnapshot.getKey(),bikeJsonV2,FriendEmail,dataSnapshot));
     }
 
 }

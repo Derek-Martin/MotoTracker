@@ -31,14 +31,16 @@ public class Part {
         Name = temp.getKey();
         Log.d("tags","data: "+data);
 
-        Brand = data.get("Brand").toString();
-        Description = data.get("Description").toString();
-        Price = data.get("Price").toString();
-        InstalledOn = data.get("Installed On").toString();
-
-        HashMap<String,String> tempTags = (HashMap<String, String>) data.get("Tags");
+        Brand = data.containsKey("Brand") ? data.get("Brand").toString() : "Unknown";
+        Description = data.containsKey("Notes") ? data.get("Notes").toString() : "";
+        Price = data.containsKey("Price") ? "$"+data.get("Price").toString() : "Unknown";
+        InstalledOn = data.containsKey("Installed On")? data.get("Installed On").toString() : "Unknown";
         Tags = new ArrayList<>();
-        Tags.addAll(tempTags.keySet());
+
+        if(data.containsKey("Tags")){
+            HashMap<String,String> tempTags = (HashMap<String, String>) data.get("Tags");
+            Tags.addAll(tempTags.keySet());
+        }
 
     }
 

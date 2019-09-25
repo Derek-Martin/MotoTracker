@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BikesTagsFragment"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:background="@color/colorDarkNonTrans"
+    tools:context=".BikesTagsFragment">
 
-    <EditText
-        android:id="@+id/PartSearch"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search for part name."
-        android:layout_margin="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </EditText>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/BikesTags"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/PartSearch"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
-        </LinearLayout>
-    </HorizontalScrollView>
+            android:hint="Search for part name."
+            android:layout_margin="5dp">
+
+        </EditText>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/BikesTags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+            </LinearLayout>
+        </HorizontalScrollView>
 
 
-    <android.support.v7.widget.RecyclerView
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        <android.support.v7.widget.RecyclerView
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/BikesRecyclerView"
+            android:layout_margin="5dp"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/BikesRecyclerView"
-        android:layout_margin="5dp"></android.support.v7.widget.RecyclerView>
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="Add a new part."
+        android:src="@drawable/ic_plus"/>
 
-</LinearLayout>
+</FrameLayout>

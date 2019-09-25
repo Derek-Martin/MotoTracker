@@ -40,15 +40,29 @@ import martin.derek.mototracker.adapters.BikeAdapter;
 public class BikesTagsFragment extends Fragment {
 
     private View MyView;
-    private String Email;
-    private DatabaseReference myRef;
+    public String Email;
+    public DatabaseReference myRef;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private List<Part> Parts;
     private HashMap<String, Integer> Tags;
     private BikeAdapter adapter;
     private String constraint = "";
+
+    private static final String REF = "ref";
+    private static final String EMAIL = "email";
+
+
     public BikesTagsFragment() { }
+
+    public static BikesTagsFragment newInstance(String ref, String email) {
+        BikesTagsFragment fragment = new BikesTagsFragment();
+        Bundle args = new Bundle();
+        args.putString(REF, ref);
+        args.putString(EMAIL, email);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     //I need to make it get every part made.
     //Added to recycler view.... animations
@@ -58,13 +72,14 @@ public class BikesTagsFragment extends Fragment {
 
     //This is called in the OnCreateView
 
+
     public void setup(){
         Parts = new ArrayList<>();
         Tags = new HashMap<>();
 
-        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail()
-                .substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
-        myRef = database.getReference(Email);
+//        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail()
+//                .substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
+//        myRef = database.getReference(Email);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -159,6 +174,10 @@ public class BikesTagsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            myRef = database.getReference(getArguments().getString(REF));
+            Email = getArguments().getString(Email);
+        }
     }
 
     @Override

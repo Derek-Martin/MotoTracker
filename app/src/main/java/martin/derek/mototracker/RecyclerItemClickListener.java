@@ -25,8 +25,8 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         private int[] prevCords = new int[2];
             @Override
             public boolean onDown(MotionEvent motionEvent) {
-                prevCords[0] = BikesFragment.scrollCords[0];
-                prevCords[1] = BikesFragment.scrollCords[1];
+//                prevCords[0] = BikesFragment.scrollCords[0];
+//                prevCords[1] = BikesFragment.scrollCords[1];
                 return false;
             }
 
@@ -46,12 +46,12 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
             @Override
             public void onLongPress(MotionEvent e) {
-                if(prevCords[0] == BikesFragment.scrollCords[0] && prevCords[1] == BikesFragment.scrollCords[1]) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && mListener != null) {
-                        mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
-                    }
-                }
+//                if(prevCords[0] == BikesFragment.scrollCords[0] && prevCords[1] == BikesFragment.scrollCords[1]) {
+//                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+//                    if (child != null && mListener != null) {
+//                        mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
+//                    }
+//                }
             }
 
             @Override

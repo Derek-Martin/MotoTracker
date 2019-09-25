@@ -6,6 +6,7 @@
 
     <color name="colorPrimary">#1565C0</color>
     <color name="colorDark">#aa212121</color>
+    <color name="colorDarkNonTrans">#212121</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorPrimaryDark">#0D47A1</color>
     <color name="colorAccent">#2979FF</color>

@@ -112,9 +112,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_Notifications:
                 frag = new NotificationFragment();
                 break;
-            case R.id.nav_Tag_Bikes:
-                frag = new BikesTagsFragment();
-                break;
             case R.id.nav_Manuals:
                 break;
             case R.id.nav_Websites:
