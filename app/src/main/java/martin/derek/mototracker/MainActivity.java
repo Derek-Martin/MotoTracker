@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity
         FriendsFragment.OnFragmentInteractionListener,
         FriendsBikesFragment.OnFragmentInteractionListener,
         NotificationFragment.OnFragmentInteractionListener,
-        BikesTagsFragment.OnFragmentInteractionListener{
+        BikesTagsFragment.OnFragmentInteractionListener,
+        PartAddFragment.OnFragmentInteractionListener{
 
     private FirebaseAuth auth;
     public static MainActivity This;

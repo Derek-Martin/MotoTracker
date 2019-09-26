@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -37,7 +39,7 @@ import martin.derek.mototracker.adapters.BikeAdapter;
 
 
 
-public class BikesTagsFragment extends Fragment {
+public class BikesTagsFragment extends Fragment{
 
     private View MyView;
     public String Email;
@@ -48,6 +50,8 @@ public class BikesTagsFragment extends Fragment {
     private HashMap<String, Integer> Tags;
     private BikeAdapter adapter;
     private String constraint = "";
+
+    private String stringRef;
 
     private static final String REF = "ref";
     private static final String EMAIL = "email";
@@ -73,13 +77,28 @@ public class BikesTagsFragment extends Fragment {
     //This is called in the OnCreateView
 
 
-    public void setup(){
-        Parts = new ArrayList<>();
-        Tags = new HashMap<>();
+    public void createPartPopup(){
 
+        PartAddFragment partAddFragment = PartAddFragment.newInstance(stringRef);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_bottom,R.anim.enter_from_bottom,R.anim.exit_to_bottom   );
+        transaction.addToBackStack(null);
+        transaction.add(R.id.BikesTagFragment,partAddFragment,"bike").commit();
+    }
+
+    public void setup(){
 //        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail()
 //                .substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
 //        myRef = database.getReference(Email);
+
+
+        MyView.findViewById(R.id.PartAdd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPartPopup();
+            }
+        });
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -98,7 +117,10 @@ public class BikesTagsFragment extends Fragment {
 
     //Called when ever data changes or initially with setup()
     private void setupViewWithData(DataSnapshot dataSnapshot){
+        Parts = new ArrayList<>();
+        Tags = new HashMap<>();
         LinearLayout tagsLayout = MyView.findViewById(R.id.BikesTags);
+        tagsLayout.removeAllViews();
         EditText search = MyView.findViewById(R.id.PartSearch);
 
         search.addTextChangedListener(new TextWatcher() {
@@ -125,6 +147,9 @@ public class BikesTagsFragment extends Fragment {
 
             final DataSnapshot temp = d.iterator().next();
             //create it and give it the snapshot of data
+            if(temp.getKey().equals("_")){
+                continue;
+            }
             Part bike = new Part(temp);
             Parts.add(bike);
 
@@ -135,6 +160,7 @@ public class BikesTagsFragment extends Fragment {
             Log.d("tags",bike.toString());
         }
         RecyclerView recyclerView = MyView.findViewById(R.id.BikesRecyclerView);
+        recyclerView.removeAllViews();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new BikeAdapter(Parts,recyclerView.getContext(),recyclerView);
         recyclerView.setAdapter(adapter);
@@ -175,7 +201,8 @@ public class BikesTagsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
-            myRef = database.getReference(getArguments().getString(REF));
+            stringRef = getArguments().getString(REF);
+            myRef = database.getReference(stringRef);
             Email = getArguments().getString(Email);
         }
     }

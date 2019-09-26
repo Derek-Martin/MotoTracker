@@ -20,13 +20,19 @@ public class Part {
     public List<String> Tags;
 
 
-    //Might make this eaiser.
-    public View GetView(){
-        return null;
+    public Part(String name, String price, String installedOn, String brand, List<String> tags){
+        Name = name;
+        Price = price;
+        InstalledOn = installedOn;
+        Brand = brand;
+        Tags = new ArrayList<>();
+        Tags.addAll(tags);
     }
 
     public Part(DataSnapshot temp) {
         //TODO Retard proof
+
+
         HashMap<String, Object> data = (HashMap<String, Object>) temp.getValue();
         Name = temp.getKey();
         Log.d("tags","data: "+data);
