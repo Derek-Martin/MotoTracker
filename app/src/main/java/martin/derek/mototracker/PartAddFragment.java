@@ -4,16 +4,16 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.view.KeyEvent.KEYCODE_ENTER;
 
 
 /**
@@ -74,6 +76,8 @@ public class PartAddFragment extends Fragment {
             }
         });
 
+        createTagInput(false);
+
 
         final EditText editText = (EditText)MyView.findViewById(R.id.InstalledOn);
         final Calendar myCalendar = Calendar.getInstance();
@@ -120,11 +124,39 @@ public class PartAddFragment extends Fragment {
         return MyView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public void createTagInput(boolean changeFocus){
+        LinearLayout TagHolder = MyView.findViewById(R.id.Tags_holder);
+        EditText editText = new EditText(TagHolder.getContext());
+
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if(keyEvent.getKeyCode() == KEYCODE_ENTER){
+                    if(((EditText)view).getText().toString().length()>0) {
+                        createTagInput(true);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        TagHolder.addView(editText);
+        if(changeFocus)
+            editText.requestFocus();
+    }
+
+    private HashMap<String, Object> getCreatedTags(){
+        LinearLayout tagHolder = MyView.findViewById(R.id.Tags_holder);
+
+        HashMap<String, Object> tags = new HashMap<>();
+        for (int i = 0;i<tagHolder.getChildCount();++i){
+            EditText child =(EditText)tagHolder.getChildAt(i);
+            if(child.getText().toString().length()>0)
+                tags.put(child.getText().toString().toUpperCase(),"_");
         }
+
+        return tags;
     }
 
     public void createPart(){
@@ -134,20 +166,13 @@ public class PartAddFragment extends Fragment {
         String Brand = ((EditText)MyView.findViewById(R.id.Brand)).getText().toString();
         String Notes = ((EditText)MyView.findViewById(R.id.Notes)).getText().toString();
 
-        List<String> Tags = new ArrayList<String>();
-        Map<String, Object> object = new HashMap<>();
-
         if(Name.length()<1){
             Toast.makeText(getContext(), "Name is required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Tags.add(Name);
-
-        if(Brand.length()> 0){
-            Tags.add(Brand);
-            object.put("Brand",Brand);
-        }
+        Map<String, Object> object = new HashMap<>();
+        Map<String, Object> tags = getCreatedTags();
 
 
         if(Price.length()>0)
@@ -156,16 +181,17 @@ public class PartAddFragment extends Fragment {
             object.put("Installed On",InstalledOn);
         if(Notes.length()>0)
             object.put("Notes",Notes);
-
-        Map<String, Object> MapTags = new HashMap<>();
-        for(int i = 0;i<Tags.size();++i){
-            MapTags.put(Tags.get(i),"_");
+        if(Brand.length()>0){
+            object.put("Brand",Brand);
+            tags.put(Brand.toUpperCase(),"_");
         }
-        object.put("Tags",MapTags);
+
+        tags.put(Name,"_");
+        object.put("Tags",tags);
 
 
         Map<String, Object> parts = new HashMap<>();
-        parts.put(Name,object);
+        parts.put(Name.toUpperCase(),object);
 
         databaseReference.updateChildren(parts);
 

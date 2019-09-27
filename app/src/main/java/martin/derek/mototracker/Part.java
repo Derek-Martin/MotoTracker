@@ -45,7 +45,9 @@ public class Part {
 
         if(data.containsKey("Tags")){
             HashMap<String,String> tempTags = (HashMap<String, String>) data.get("Tags");
-            Tags.addAll(tempTags.keySet());
+            tempTags.forEach((s, s2) -> {
+                Tags.add(s.toUpperCase());
+            });
         }
 
     }

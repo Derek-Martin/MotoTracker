@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -62,6 +64,14 @@ public class BikeAdapter extends RecyclerView.Adapter<BikeAdapter.MyViewHolder> 
             partFilter = new PartFilter();
         }
         return partFilter;
+    }
+
+
+    public void runAnimations(){
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),R.anim.layout_animation_scale_in);
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -124,9 +134,8 @@ public class BikeAdapter extends RecyclerView.Adapter<BikeAdapter.MyViewHolder> 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             filteredParts = (List<Part>) filterResults.values;
-            notifyDataSetChanged();
-
-
+            runAnimations();
         }
+
     }
 }

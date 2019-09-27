@@ -2,6 +2,7 @@ package martin.derek.mototracker;
 
 import android.content.Context;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import martin.derek.mototracker.adapters.BikeAdapter;
 
@@ -46,8 +47,6 @@ public class BikesTagsFragment extends Fragment{
     public DatabaseReference myRef;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    private List<Part> Parts;
-    private HashMap<String, Integer> Tags;
     private BikeAdapter adapter;
     private String constraint = "";
 
@@ -117,8 +116,9 @@ public class BikesTagsFragment extends Fragment{
 
     //Called when ever data changes or initially with setup()
     private void setupViewWithData(DataSnapshot dataSnapshot){
-        Parts = new ArrayList<>();
-        Tags = new HashMap<>();
+        List<Part> parts = new ArrayList<>();
+        HashMap<String, Integer> tags = new HashMap<>();
+
         LinearLayout tagsLayout = MyView.findViewById(R.id.BikesTags);
         tagsLayout.removeAllViews();
         EditText search = MyView.findViewById(R.id.PartSearch);
@@ -140,10 +140,10 @@ public class BikesTagsFragment extends Fragment{
 
             }
         });
-        //Getting the users current bikes.
+        //Getting the users current Parts.
         Iterable<DataSnapshot> d = dataSnapshot.getChildren();
         Log.d("Tags",d.toString());
-        while (d.iterator().hasNext()) {//Each Bike
+        while (d.iterator().hasNext()) {//Each Part
 
             final DataSnapshot temp = d.iterator().next();
             //create it and give it the snapshot of data
@@ -151,10 +151,10 @@ public class BikesTagsFragment extends Fragment{
                 continue;
             }
             Part bike = new Part(temp);
-            Parts.add(bike);
+            parts.add(bike);
 
             for(String tag : bike.Tags){
-                Tags.put(tag, (Tags.get(tag) == null ? 0 : Tags.get(tag)) + 1);
+                tags.put(tag, (tags.get(tag) == null ? 0 : tags.get(tag)) + 1);
             }
 
             Log.d("tags",bike.toString());
@@ -162,13 +162,15 @@ public class BikesTagsFragment extends Fragment{
         RecyclerView recyclerView = MyView.findViewById(R.id.BikesRecyclerView);
         recyclerView.removeAllViews();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BikeAdapter(Parts,recyclerView.getContext(),recyclerView);
+        adapter = new BikeAdapter(parts,recyclerView.getContext(),recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.refreshDrawableState();
-        Tags = sortByValue(Tags);
-        Log.d("tags","");
+        adapter.runAnimations();
 
-        for(String key : Tags.keySet()){
+
+        List<String> ListTags = getTagList(tags);
+
+        for(String tag : ListTags){
             Button b = new Button(recyclerView.getContext());
             b.getBackground().setTint(getResources().getColor(R.color.colorFieldBackground,null));
 
@@ -189,12 +191,39 @@ public class BikesTagsFragment extends Fragment{
                     adapter.getFilter().filter(constraint);
                 }
             });
-            b.setText(Tags.get(key)+" | "+key);
-            b.setTag(key);
+            b.setText(tag);
+            b.setTag(tag.substring(tag.indexOf('|')+2));
             tagsLayout.addView(b);
         }
+    }
 
+    public List<String> getTagList(Map<String,Integer> map){
+        List<String> tags = new ArrayList<>();
+        Set<String> keys = map.keySet();
 
+        for(String key : keys)
+            tags.add(map.get(key)+" | "+key);
+
+       //Sort by number than text
+        tags.sort(new Comparator<String>() {
+            @Override
+            public int compare(String s, String t1) {
+                String[] first = s.split(" | ",3);
+                String[] second = t1.split(" | ",3);
+
+                int sNum = Integer.parseInt(first[0]);
+                int t1Num = Integer.parseInt(second[0]);
+
+                if(sNum>t1Num)
+                    return -1;
+                else if(sNum<t1Num)
+                    return 1;
+                else
+                    return first[2].compareTo(second[2]);
+            }
+        });
+
+        return tags;
     }
 
     @Override
@@ -236,28 +265,7 @@ public class BikesTagsFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
-    {
-        // Create a list from elements of HashMap
-        List<Map.Entry<String, Integer> > list =
-                new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
 
-        // Sort the list
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
-            public int compare(Map.Entry<String, Integer> o1,
-                               Map.Entry<String, Integer> o2)
-            {
-                return (o2.getValue()).compareTo(o1.getValue());
-            }
-        });
-
-        // put data from sorted list to hashmap
-        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
-        for (Map.Entry<String, Integer> aa : list) {
-            temp.put(aa.getKey(), aa.getValue());
-        }
-        return temp;
-    }
 
 }
 
