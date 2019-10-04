@@ -43,7 +43,6 @@ import martin.derek.mototracker.adapters.BikeAdapter;
 public class BikesTagsFragment extends Fragment{
 
     private View MyView;
-    public String Email;
     public DatabaseReference myRef;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -53,16 +52,14 @@ public class BikesTagsFragment extends Fragment{
     private String stringRef;
 
     private static final String REF = "ref";
-    private static final String EMAIL = "email";
 
 
     public BikesTagsFragment() { }
 
-    public static BikesTagsFragment newInstance(String ref, String email) {
+    public static BikesTagsFragment newInstance(String ref) {
         BikesTagsFragment fragment = new BikesTagsFragment();
         Bundle args = new Bundle();
         args.putString(REF, ref);
-        args.putString(EMAIL, email);
         fragment.setArguments(args);
         return fragment;
     }
@@ -162,7 +159,7 @@ public class BikesTagsFragment extends Fragment{
         RecyclerView recyclerView = MyView.findViewById(R.id.BikesRecyclerView);
         recyclerView.removeAllViews();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BikeAdapter(parts,recyclerView.getContext(),recyclerView);
+        adapter = new BikeAdapter(parts,recyclerView.getContext(),recyclerView,myRef);
         recyclerView.setAdapter(adapter);
         recyclerView.refreshDrawableState();
         adapter.runAnimations();
@@ -232,7 +229,6 @@ public class BikesTagsFragment extends Fragment{
         if(getArguments() != null){
             stringRef = getArguments().getString(REF);
             myRef = database.getReference(stringRef);
-            Email = getArguments().getString(Email);
         }
     }
 

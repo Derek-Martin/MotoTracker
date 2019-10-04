@@ -59,7 +59,7 @@ public class BikesFragment extends Fragment {
 
     private View MyView;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private String Email;
+    private String Uid;
     private String Tag = "BikeFragment";
     DatabaseReference myRef;
 
@@ -94,7 +94,7 @@ public class BikesFragment extends Fragment {
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    openBike(Email+"/"+temp.getKey());
+                    openBike(Uid+"/"+temp.getKey());
                 }
             });
 
@@ -107,7 +107,7 @@ public class BikesFragment extends Fragment {
     }
 
     public void openBike(String ref){
-        BikesTagsFragment bikesTagsFragment = BikesTagsFragment.newInstance(ref,Email);
+        BikesTagsFragment bikesTagsFragment = BikesTagsFragment.newInstance(ref);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_bottom,R.anim.enter_from_bottom,R.anim.exit_to_bottom   );
@@ -116,53 +116,50 @@ public class BikesFragment extends Fragment {
     }
 
     public void setup() {
+        //TODO Use uid instead of EMAIL FOR BIKE STORAGE
         ((ProgressBar) (MyView.findViewById(R.id.progressBar))).setProgress(25);
-        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail().substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
-        myRef = database.getReference(Email);
+//        Toast.makeText(getContext(), FirebaseAuth.getInstance().getUid(), Toast.LENGTH_SHORT).show();
+//        Email = FirebaseAuth.getInstance().getCurrentUser().getEmail().substring(0, FirebaseAuth.getInstance().getCurrentUser().getEmail().length() - 4);
+        Uid = FirebaseAuth.getInstance().getUid();
+        myRef = database.getReference(Uid);
 
         MyView.findViewById(R.id.add_bike).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //create new fragment with the possible fields
-                //Brand
-                //Installed On
-                //Notes (optional)
-                //Price
-                //Tags List
+                //TODO Create new Bike
 
 
+                final LinearLayout addBike = (LinearLayout) LayoutInflater.from(MyView.getContext()).inflate(R.layout.new_collection, null);
+                ((EditText) addBike.findViewById(R.id.editText3)).setHint("Bike name");
+                ((EditText) addBike.findViewById(R.id.editText3)).setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                        if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                        {
+                            addBike.findViewById(R.id.item_add).callOnClick();
+                        }
+                        return true;
+                    }
+                });
+                ((LinearLayout) MyView.findViewById(R.id.Bikes)).addView(addBike, 0);
+                addBike.findViewById(R.id.item_add).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String name = ((EditText)addBike.getChildAt(0)).getText().toString();
+                        //TODO Validation of no special characters.
+                        Map<String, Object> toPush = new HashMap<>();
+                        toPush.put("_", "_");
+                        database.getReference(Uid + "/" + name.trim()).updateChildren(toPush);
+                        ((ViewManager) addBike.getParent()).removeView(addBike);
 
-//                final LinearLayout addBike = (LinearLayout) LayoutInflater.from(MyView.getContext()).inflate(R.layout.new_collection, null);
-//                ((EditText) addBike.findViewById(R.id.editText3)).setHint("Bike name");
-//                ((EditText) addBike.findViewById(R.id.editText3)).setOnKeyListener(new View.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//                        if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
-//                        {
-//                            addBike.findViewById(R.id.item_add).callOnClick();
-//                        }
-//                        return true;
-//                    }
-//                });
-//                ((LinearLayout) MyView).addView(addBike, 2);
-//                addBike.findViewById(R.id.item_add).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        String name = ((EditText)addBike.getChildAt(0)).getText().toString();
-//                        //TODO Validation of no special characters.
-//                        Map<String, Object> toPush = new HashMap<>();
-//                        toPush.put("_", "_");
-//                        database.getReference(Email + "/" + name.trim()).updateChildren(toPush);
-//                        ((ViewManager) addBike.getParent()).removeView(addBike);
-//
-//                    }
-//                });
-//                addBike.findViewById(R.id.item_discard).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        ((ViewManager) addBike.getParent()).removeView(addBike);
-//                    }
-//                });
+                    }
+                });
+                addBike.findViewById(R.id.item_discard).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((ViewManager) addBike.getParent()).removeView(addBike);
+                    }
+                });
 
             }
         });
